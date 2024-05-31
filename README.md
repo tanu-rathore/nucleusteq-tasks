@@ -7,7 +7,7 @@ QuickQuiz is an interactive quiz game developed using HTML, CSS, JavaScript for 
 4. Responsive design for seamless user experience across devices.
 
 *Installation*
-1. clone the repository: "git clone https://github.com/tanu-rathore/nucleusteq-tasks/new/master.git".
+1. clone the repository: "https://github.com/tanu-rathore/nucleusteq-tasks/tree/master".
 2. Install dependencies : npm install.
 3. Setup mysql database : Create a MySQL database named dbquiz. Import the SQL dump file database.sql located in the database directory to set up the necessary tables and sample data.
 4. Start the server : node index.js.
