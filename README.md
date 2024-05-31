@@ -11,6 +11,7 @@ QuickQuiz is an interactive quiz game developed using HTML, CSS, JavaScript for 
 2. Install dependencies : npm install.
 3. Setup mysql database : Create a MySQL database named dbquiz. Import the SQL dump file database.sql located in the database directory to set up the necessary tables and sample data.
 4. Start the server : node index.js.
+5. Information: the folder "frontend" contains the UI of project, "backend" contains the node.js code and "db" contains the database.
 
 *Usage*
 1. Select any category then an alert will pop up. After clicking OK, select difficulty level.
