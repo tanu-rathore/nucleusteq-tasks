@@ -245,10 +245,4 @@ ALTER TABLE questions auto_increment = 201 + 1;
 SELECT * FROM  questions;
 
 
-if (selectedDifficulty === 'easy') {
-                questions = questions.slice(0, 10);
-            } else if (selectedDifficulty === 'medium') {
-                questions = questions.slice(0, 15);
-            } else {
-                questions = questions.slice(0, 20); 
-            } 
+
