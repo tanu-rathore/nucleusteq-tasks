@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", async function() {
     const questionElement = document.getElementById("question");
     const optionsElement = document.getElementById("options");
-    const nextButton = document.getElementById("nextButton");
     const questionNumberElement = document.getElementById("questionNumber");
     const timerElement = document.getElementById("timer");
 
@@ -12,29 +11,39 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     // Fetch questions based on selected category
     const selectedCategory = localStorage.getItem("selectedCategory");
-    const selectedDifficulty = localStorage.getItem("selectedDifficulty");
+    let selectedDifficulty = localStorage.getItem("selectedDifficulty");
     const apiUrl = `http://localhost:3000/questions?categoryId=${selectedCategory}`;
 
     try {
         const response = await fetch(apiUrl);
         const data = await response.json();
-        questions = data;
-        if(selectedDifficulty === 'easy') {
-            questions.length = 10;
+        console.log( data);
+
+        if (Array.isArray(data) && data.length > 0) {
+            questions = data;
+
+            if (selectedDifficulty === 'easy') {
+                questions.length = Math.min(questions.length, 10);
+            } else if ( selectedDifficulty === 'medium') {
+                questions.length = Math.min(questions.length, 15);
+            }
+
+            console.log(`total questions(${selectedDifficulty}): ${questions.length}`);
+
+            displayQuestion();
+        } else {
+            console.error('No questions found for the selected category');
         }
-        else if( selectedDifficulty === 'medium') {
-            questions.length = 15;
-        }
-        displayQuestion();
     } catch (error) {
         console.error('Error fetching quiz questions:', error);
+        alert("Error fetching quiz questions. Please try again later.");
     }
 
-    // function to display the current question and options
+    // Function to display the current question
     function displayQuestion() {
-        clearTimeout(timer); 
+        clearTimeout(timer);
         const currentQuestion = questions[currentQuestionIndex];
-        questionNumberElement.innerHTML = `<b>Question ${currentQuestionIndex + 1} / ${questions.length}<b>`;
+        questionNumberElement.innerHTML = `<b>Question ${currentQuestionIndex + 1} / ${questions.length}</b>`;
         questionElement.innerHTML = decodeURIComponent(currentQuestion.question_text);
         optionsElement.innerHTML = '';
 
@@ -67,25 +76,25 @@ document.addEventListener("DOMContentLoaded", async function() {
             updateTimerDisplay(timeLeft);
             if (timeLeft === 0) {
                 clearInterval(timer);
-                selectAnswer(null, false); 
+                selectAnswer(null, false);
             }
         }, 1000);
     }
 
     // Function to update timer display
     function updateTimerDisplay(timeLeft) {
-        timerElement.innerHTML = `<b>Time left: ${timeLeft} seconds<b>`;
+        timerElement.innerHTML = `<b>Time left: ${timeLeft} seconds</b>`;
     }
 
     // Function to handle option selection
     function selectAnswer(optionElement, isCorrect) {
-        clearTimeout(timer); 
+        clearTimeout(timer);
         if (optionElement) {
             if (isCorrect) {
-                optionElement.style.backgroundColor = '#4CAF50'; // Green color for correct answer
+                optionElement.style.backgroundColor = '#4CAF50'; 
                 score++;
             } else {
-                optionElement.style.backgroundColor = '#FF5733'; // Red color for wrong answer
+                optionElement.style.backgroundColor = '#FF5733';
             }
             optionsElement.querySelectorAll('.option').forEach((option) => {
                 option.removeEventListener('click', () => {});
@@ -95,19 +104,16 @@ document.addEventListener("DOMContentLoaded", async function() {
         setTimeout(() => {
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
-                    displayQuestion();
-                } else {
-                    endQuiz();
-                }
-            
-           }, 1000);
+                displayQuestion();
+            } else {
+                endQuiz();
+            }
+        }, 1000);
     }
 
     // Function to end the quiz
     function endQuiz() {
-       
-        questionElement.innerHTML = `Your Score: ${score} / ${questions.length}`;
+        questionElement.innerHTML = `<h5 style="text-align: center;">Your Score: ${score} / ${questions.length}</h5>`;
         optionsElement.innerHTML = '';
-        nextButton.style.display = 'none';
     }
 });

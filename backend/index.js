@@ -9,7 +9,7 @@ const port = 3000;
 app.use(cors());
 app.use(bodyParser.json());  
 
-// Create a MySQL connection
+// Create MySQL connection
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -17,7 +17,7 @@ const connection = mysql.createConnection({
     database: 'dbquiz'
 });
 
-//Connect to database
+// Connect to database
 connection.connect(err => {
     if (err) {
         console.error('Error connecting to the database:', err);
@@ -26,7 +26,22 @@ connection.connect(err => {
     console.log('Connected to the database');
 });
 
-// Define an endpoint to fetch questions based on category
+app.use(express.static('public'));
+
+// Define endpoint to fetch categories
+app.get('/categories', (req, res) => {
+    const query = 'SELECT * FROM categories';
+    connection.query(query, (error, results) => {
+        if (error) {
+            console.error('Error fetching categories:', error);
+            res.status(500).send('Error fetching categories');
+            return;
+        }
+        res.json(results);
+    });
+});
+
+// Define endpoint to fetch questions
 app.get('/questions', (req, res) => {
     const categoryId = req.query.categoryId;
     const query = 'SELECT * FROM questions WHERE category_id = ?';
@@ -34,14 +49,19 @@ app.get('/questions', (req, res) => {
     connection.query(query, [categoryId], (error, results) => {
         if (error) {
             console.error('Error fetching questions:', error);
-            res.status(500).send('Error fetching questions');
-            return;
+            return res.status(500).send('Error fetching questions');
         }
+        
+        if (results.length === 0) {
+            console.error('No questions found for the selected category');
+            return res.status(404).send('No questions found for the selected category');
+        }
+        
         res.json(results);
     });
 });
 
-// Define a POST endpoint to add a new question
+// Define endpoint to add a new question
 app.post('/questions', (req, res) => {
     const { question_text, category_id, correct_option, option1, option2, option3, option4 } = req.body;
 
@@ -61,6 +81,25 @@ app.post('/questions', (req, res) => {
     });
 });
 
+// Define endpoint to add a new category
+app.post('/categories', (req, res) => {
+    const { category_name } = req.body;
+
+    if (!category_name) {
+        return res.status(400).send('Category name is required');
+    }
+
+    const query = 'INSERT INTO categories (category_name) VALUES (?)';
+    const values = [category_name];
+
+    connection.query(query, values, (error, results) => {
+        if (error) {
+            console.error('Error inserting category:', error);
+            return res.status(500).send('Error inserting category');
+        }
+        res.send('Category added successfully');
+    });
+});
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);

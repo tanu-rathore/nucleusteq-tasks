@@ -245,53 +245,10 @@ ALTER TABLE questions auto_increment = 201 + 1;
 SELECT * FROM  questions;
 
 
-
-
-
-
-
-
-
-
-const express = require('express');
-const mysql = require('mysql');
-
-const app = express();
-const cors = require('cors');
-app.use(cors());
-
-const port = 3000;
-
-
-const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'Tanu2001@',
-  database: 'quiz'
-});
-
-db.connect((err) => {
-  if (err) {
-    throw err;
-  }
-  console.log('MySQL Connected...');
-});
-
-
-app.get('/data', (req, res) => {
-  const sql = `
-    SELECT q.*, c.cat_name 
-    FROM questions q
-    JOIN categories c ON q.category_id = c.id
-  `;
-  db.query(sql, (err, results) => {
-    if (err) {
-      return res.status(500).send(err);
-    }
-    res.json(results);
-  });
-});
-
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+if (selectedDifficulty === 'easy') {
+                questions = questions.slice(0, 10);
+            } else if (selectedDifficulty === 'medium') {
+                questions = questions.slice(0, 15);
+            } else {
+                questions = questions.slice(0, 20); 
+            } 

@@ -1,6 +1,7 @@
 body {
     font-family: Arial, sans-serif;
     background-color: rgb(194, 221, 239);
+    background-image: url('images/bg6.jpg');
     margin: 0;
     padding: 0;
 }
@@ -54,8 +55,7 @@ h1 {
 }
 
 .option:hover {
-    background-color: rgba(122, 165, 196, 0.973);
-    color: white;
+    background-color: #f2bb05;
 }
 
 #nextButton {
